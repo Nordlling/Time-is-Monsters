@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Ball
+  - Border
+  - Enemy
   layers:
   - Default
   - TransparentFX
@@ -14,8 +16,8 @@ TagManager:
   - UI
   - Wall
   - Ball
-  - 
-  - 
+  - Border
+  - Enemy
   - 
   - 
   - 

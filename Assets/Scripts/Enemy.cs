@@ -3,29 +3,50 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using Zenject;
 
 public class Enemy : MonoBehaviour
 {
+    [Inject] private DifficultyManager difficultyManager;
+    [Inject] private Boosters boosters;
+    [Inject] private Spawner spawner;
+
+    [SerializeField] private Animator animator;
+    [SerializeField] private float maxHealth = 100;
+    [SerializeField] private float difficultyСoef = 1.2f;
+
+    private float _currentHealth;
+    private EnemyMovement _enemyMovement;
+
+    // [Inject] 
+    // public void Construct(DifficultyManager difficultyManager)
+    // {
+    //     _difficultyManager = difficultyManager;
+    //     _difficultyManager.OnComplicate += Complicate;
+    // }
     
-    [SerializeField] private int maxHealth = 100;
-    
-    private int _currentHealth;
+    private void OnEnable()
+    {
+        difficultyManager.OnIncreaseLevel += Complicate;
+        boosters.OnKillAll += Die;
+    }
+    private void OnDisable()
+    {
+        difficultyManager.OnIncreaseLevel -= Complicate;
+        boosters.OnKillAll -= Die;
+    }
 
     private void Start()
     {
-        _currentHealth = maxHealth;
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.CompareTag("Ball"))
+        for (int i = 0; i < difficultyManager.Level; i++)
         {
-            TakeDamage(40);
-            Destroy(collision.gameObject);
+            maxHealth *= difficultyСoef;
         }
+        _currentHealth = maxHealth;
+        _enemyMovement = GetComponent<EnemyMovement>();
     }
     
-    private void TakeDamage(int damage)
+    public void TakeDamage(float damage)
     {
             if (damage < 0)
             {
@@ -43,8 +64,20 @@ public class Enemy : MonoBehaviour
 
     private void Die()
     {
+        // Destroy(gameObject);
+        spawner.KillEnemy();
         Debug.Log("Die");
+        _enemyMovement.enabled = false;
+        animator.SetTrigger("die");
+        Invoke(nameof(Disappear), 3f);
+    }
+
+    private void Disappear()
+    {
         Destroy(gameObject);
-        // todo: animation
+    }
+
+    private void Complicate()
+    {
     }
 }
