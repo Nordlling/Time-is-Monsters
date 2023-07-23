@@ -64,9 +64,14 @@ public class Enemy : MonoBehaviour
 
     private void Die()
     {
+        if (!_enemyMovement.enabled)
+        {
+            return;
+        }
+        
         // Destroy(gameObject);
         spawner.KillEnemy();
-        Debug.Log("Die");
+        // Debug.Log("Die");
         _enemyMovement.enabled = false;
         animator.SetTrigger("die");
         Invoke(nameof(Disappear), 3f);

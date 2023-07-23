@@ -5,12 +5,12 @@ using UnityEngine.Events;
 public class GameOverNotifier : MonoBehaviour
 {
     public event Action OnGameOver;
-    public event Action OnFailDisplay;
+    public event Action<int> OnFailDisplay;
 
-    public void GameOver()
+    public void GameOver(int score)
     {
         NotifyEnemiesGameOver();
-        NotifyDisplayGameOver();
+        NotifyDisplayGameOver(score);
     }
     
     private void NotifyEnemiesGameOver()
@@ -18,9 +18,9 @@ public class GameOverNotifier : MonoBehaviour
         OnGameOver?.Invoke();
     }
     
-    private void NotifyDisplayGameOver()
+    private void NotifyDisplayGameOver(int score)
     {
-        OnFailDisplay?.Invoke();
+        OnFailDisplay?.Invoke(score);
     }
     
     

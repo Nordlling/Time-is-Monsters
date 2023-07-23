@@ -64,6 +64,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 855957486623032011}
   speed: 2
+  maxSpeed: 21
   "difficulty\u0421oef": 1.2
   noRandom: 0
 --- !u!54 &8502454728608380379

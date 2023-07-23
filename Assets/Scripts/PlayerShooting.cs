@@ -17,22 +17,25 @@ public class PlayerShooting : MonoBehaviour
 
     private float _leftTime;
     private Vector3 worldMousePosition;
+
+    private int layerMask;
     
     
     private void OnEnable()
     {
         difficultyManager.OnIncreaseLevel += Complicate;
-        boosters.OnUpgradeShootSpeed += Upgrade;
+        boosters.OnUpgradeRateFire += UpgradeRateFire;
     }
     private void OnDisable()
     {
         difficultyManager.OnIncreaseLevel -= Complicate;
-        boosters.OnUpgradeShootSpeed -= Upgrade;
+        boosters.OnUpgradeRateFire -= UpgradeRateFire;
     }
 
     private void Start()
     {
         _leftTime = 0;
+        layerMask = ~LayerMask.GetMask("Border");
     }
 
     private void Update()
@@ -56,7 +59,7 @@ public class PlayerShooting : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(mousePosition);
         RaycastHit hit;
 
-        if (Physics.Raycast(ray, out hit))
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask))
         {
             worldMousePosition = hit.point;
         }
@@ -71,7 +74,7 @@ public class PlayerShooting : MonoBehaviour
     {
         
     }
-    private void Upgrade()
+    private void UpgradeRateFire()
     {
         if (recharge > 0.0001f)
         {

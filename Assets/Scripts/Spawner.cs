@@ -22,7 +22,11 @@ public class Spawner : MonoBehaviour
     [SerializeField] private float freezeTime = 3f;
     [SerializeField] private int enemyCountToLose = 10;
 
-    private int enemyCount;
+    public event Action<int> OnUpdateKilled;
+    public event Action<int> OnUpdateOnField;
+
+    public int AliveEnemies { get; private set; }
+    private int _deadEnemies;
     private bool _freeze;
     private float _leftFreezeTime;
     
@@ -74,13 +78,19 @@ public class Spawner : MonoBehaviour
 
     public void KillEnemy()
     {
-        enemyCount--;
+        AliveEnemies--;
+        _deadEnemies++;
+        if (AliveEnemies < 0)
+        {
+            AliveEnemies = 0;
+        }
+        OnUpdateKilled?.Invoke(_deadEnemies);
+        OnUpdateOnField?.Invoke(AliveEnemies);
     }
 
     private void Spawn()
     {
-        Debug.Log($"FIRST enemyCount = {enemyCount}");
-        if (enemyCount >= enemyCountToLose)
+        if (AliveEnemies >= enemyCountToLose)
         {
             return;
         } 
@@ -88,13 +98,13 @@ public class Spawner : MonoBehaviour
         randomPoint.y = point.position.y;
 
         diContainer.InstantiatePrefab(enemyPrefab, randomPoint, Quaternion.identity, null);
-        Debug.Log("SPAWN");
-        enemyCount++;
-        if (enemyCount >= enemyCountToLose)
+        AliveEnemies++;
+        OnUpdateOnField?.Invoke(AliveEnemies);
+        if (AliveEnemies >= enemyCountToLose)
         {
-            gameOverNotifier.GameOver();
+            gameOverNotifier.GameOver(_deadEnemies);
+            SaveManager.SaveHighScore(_deadEnemies);
         }
-        Debug.Log($"LAST enemyCount = {enemyCount}");
 
         // Instantiate(enemyPrefab, randomPoint, Quaternion.identity);
         // GameObject newEnemy = enemyFactory.Create();

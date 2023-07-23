@@ -9,6 +9,7 @@ public class EnemyMovement : MonoBehaviour
     
     [SerializeField] private Animator animator;
     [SerializeField] private float speed = 2f;
+    [SerializeField] private float maxSpeed = 24f;
     [SerializeField] private float difficultyСoef = 1.2f;
 
     [SerializeField] private bool noRandom;
@@ -31,7 +32,13 @@ public class EnemyMovement : MonoBehaviour
     {
         for (int i = 0; i < _difficultyManager.Level; i++)
         {
+            
             speed *= difficultyСoef;
+            if (speed > maxSpeed)
+            {
+                speed = maxSpeed;
+                break;
+            }
             animator.SetFloat("speedMultiplier", animator.GetFloat("speedMultiplier") * difficultyСoef);
         }
         if (noRandom)
@@ -41,7 +48,7 @@ public class EnemyMovement : MonoBehaviour
         Vector2 randomDirection = UnityEngine.Random.insideUnitCircle.normalized;
         _direction = new Vector3(randomDirection.x, 0f, randomDirection.y).normalized;
         // transform.rotation = Quaternion.Euler(0f, 90f, 0f);
-        Debug.Log(_direction);
+        // Debug.Log(_direction);
         transform.rotation = Quaternion.LookRotation(_direction, Vector3.up);
     }
 
@@ -62,7 +69,6 @@ public class EnemyMovement : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        
         if (collision.gameObject.CompareTag("Border"))
         {
             Vector3 collisionDirection = collision.contacts[0].normal;
