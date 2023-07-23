@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,7 +9,7 @@ public class ButtonTimer : MonoBehaviour
     [Inject] private Boosters boosters;
 
     [SerializeField] private TextMeshProUGUI timerText;
-    [SerializeField] private Image image;
+    [SerializeField] private GameObject image;
     [SerializeField] private BoosterTypeEnum boosterType;
 
     private void OnEnable()
@@ -29,12 +27,12 @@ public class ButtonTimer : MonoBehaviour
         if (this.boosterType.Equals(boosterType))
         {
             time = (float)Math.Round(time, 1);
-            image.gameObject.SetActive(true);
+            image.SetActive(true);
             timerText.text = time.ToString("F1");
             
             if (time == 0)
             {
-                image.gameObject.SetActive(false);
+                image.SetActive(false);
             }
         }
     }

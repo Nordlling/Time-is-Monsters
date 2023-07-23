@@ -11,10 +11,10 @@ GameObject:
   - component: {fileID: 2752821619625635501}
   - component: {fileID: 747771085084608342}
   - component: {fileID: 9182554388890105185}
-  - component: {fileID: 8118244712041135521}
-  - component: {fileID: 1126689426626997994}
   - component: {fileID: 5416101459953616234}
   - component: {fileID: 4062138986199098528}
+  - component: {fileID: 8118244712041135521}
+  - component: {fileID: 1126689426626997994}
   m_Layer: 0
   m_Name: Ball
   m_TagString: Ball
@@ -86,6 +86,33 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &5416101459953616234
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6982014269128839784}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e92c4f8ae76ffb648a465527a86b342f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lifecycle: 4
+--- !u!114 &4062138986199098528
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6982014269128839784}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0db50e2ef2844fceb876217d6e127e30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 40
+  coef: 1.2
 --- !u!54 &8118244712041135521
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -115,31 +142,3 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.000399306
   m_Center: {x: 2.910383e-11, y: -2.910383e-11, z: 7.421477e-10}
---- !u!114 &5416101459953616234
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6982014269128839784}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e92c4f8ae76ffb648a465527a86b342f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  lifecycle: 4
---- !u!114 &4062138986199098528
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6982014269128839784}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0db50e2ef2844fceb876217d6e127e30, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  explosionPrefab: {fileID: 0}
-  damage: 40
-  coeff: 1.2

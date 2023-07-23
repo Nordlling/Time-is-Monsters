@@ -1,23 +1,20 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Assertions.Must;
 using Zenject;
 
 public class Boosters : MonoBehaviour
 {
     [Inject] private Spawner spawner;
 
-    [SerializeField] private float freezeSpawnRecharge = 60f;
     [SerializeField] private float killAllRecharge = 60f;
+    [SerializeField] private float freezeSpawnRecharge = 60f;
     [SerializeField] private float upgradeDamageRecharge = 60f;
     [SerializeField] private float upgradeRateFireRecharge = 60f;
     
     private Dictionary<BoosterTypeEnum, TimerInfo> timers = new Dictionary<BoosterTypeEnum, TimerInfo>();
 
     public event Action OnKillAll;
-    public event Action OnUpgradeDamage;
     public event Action OnUpgradeRateFire;
     public event Action<BoosterTypeEnum, float> OnUpdateButtonTimer;
 
@@ -25,8 +22,8 @@ public class Boosters : MonoBehaviour
 
     private void Start()
     {
-        AddTimer(BoosterTypeEnum.FREEZE_SPAWN, freezeSpawnRecharge);
         AddTimer(BoosterTypeEnum.KILL_ALL, killAllRecharge);
+        AddTimer(BoosterTypeEnum.FREEZE_SPAWN, freezeSpawnRecharge);
         AddTimer(BoosterTypeEnum.UPGRADE_DAMAGE, upgradeDamageRecharge);
         AddTimer(BoosterTypeEnum.UPGRADE_RATE_FIRE, upgradeRateFireRecharge);
     }
@@ -49,11 +46,11 @@ public class Boosters : MonoBehaviour
         
         if (Input.GetButtonDown("Fire2"))
         {
-            ActivateFreezeSpawn();
+            ActivateKillAll();
         }
         if (Input.GetButtonDown("Fire3"))
         {
-            ActivateKillAll();
+            ActivateFreezeSpawn();
         }
         if (Input.GetKeyDown(KeyCode.D))
         {

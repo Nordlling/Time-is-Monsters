@@ -47,7 +47,7 @@ public class HighScoreList : MonoBehaviour
             TextMeshProUGUI dateText = recordObject.transform.Find("DateText").GetComponent<TextMeshProUGUI>();
             TextMeshProUGUI scoreText = recordObject.transform.Find("ScoreText").GetComponent<TextMeshProUGUI>();
             numberText.text = (i + 1) + ".";
-            dateText.text = highScores[i].date + ":";
+            dateText.text = highScores[i].date;
             scoreText.text = highScores[i].score.ToString();
         }
     }

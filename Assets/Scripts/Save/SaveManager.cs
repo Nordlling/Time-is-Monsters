@@ -18,25 +18,24 @@ public class SaveManager : MonoBehaviour
             highScores = JsonUtility.FromJson<HighScoreContainer>(PlayerPrefs.GetString(HighScoresKey)).highScores;
             if (highScores.Count < maxCount)
             {
-                highScores.Add(new HighScore { date = DateTime.Now.ToString(), score = score });
+                highScores.Add(new HighScore(DateTime.Now.ToString(), score));
             }
             else
             {
-                HighScore highScore = highScores.OrderBy(e => e.score).FirstOrDefault();
-                if (highScore == null || score < highScore.score)
+                HighScore lowestScore = highScores.OrderBy(e => e.score).FirstOrDefault();
+                if (lowestScore == null || score < lowestScore.score)
                 {
                     return;
                 }
-                highScores[highScores.IndexOf(highScore)] = new HighScore { date = DateTime.Now.ToString(), score = score };
-
+                highScores[highScores.IndexOf(lowestScore)] = new HighScore(DateTime.Now.ToString(), score);
             }
         }
         else
         {
-            highScores.Add(new HighScore { date = DateTime.Now.ToString(), score = score });
+            highScores.Add(new HighScore(DateTime.Now.ToString(), score));
         }
         
-        HighScoreContainer container = new HighScoreContainer { highScores = highScores };
+        HighScoreContainer container = new HighScoreContainer(highScores);
         json = JsonUtility.ToJson(container);
         PlayerPrefs.SetString(HighScoresKey, json);
         PlayerPrefs.Save();
@@ -44,32 +43,13 @@ public class SaveManager : MonoBehaviour
     
     public static List<HighScore> LoadHighScores()
     {
-        List<HighScore> result = new List<HighScore>();
+        
+        List<HighScore> result = null;
         if (PlayerPrefs.HasKey(HighScoresKey))
         {
             result = JsonUtility.FromJson<HighScoreContainer>(PlayerPrefs.GetString(HighScoresKey)).highScores;
-            // foreach (var highScore in result)
-            // {
-            //     Debug.Log(highScore.date + " - " + highScore.score);
-            // }
         }
 
-        return result;
+        return result != null ? result : new List<HighScore>();
     }
-    
-    
-    
-}
-
-[Serializable]
-public class HighScoreContainer
-{
-    public List<HighScore> highScores = new List<HighScore>();
-}
-
-[Serializable]
-public class HighScore
-{
-    public string date;
-    public int score;
 }

@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class DifficultyManager : MonoBehaviour
@@ -9,7 +7,7 @@ public class DifficultyManager : MonoBehaviour
     
     [SerializeField] private int frequency = 10;
     private float _leftTime;
-    public int Level { get; private set; }
+    public int DifficultyLevel { get; private set; }
 
     private void Start()
     {
@@ -21,7 +19,7 @@ public class DifficultyManager : MonoBehaviour
         if (_leftTime < 0)
         {
             _leftTime = frequency;
-            Level++;
+            DifficultyLevel++;
             OnIncreaseLevel?.Invoke();
         }
         _leftTime -= Time.deltaTime;

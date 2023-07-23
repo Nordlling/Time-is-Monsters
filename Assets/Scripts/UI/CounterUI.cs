@@ -10,22 +10,22 @@ public class CounterUI : MonoBehaviour
 
     private void OnEnable()
     {
-        spawner.OnUpdateKilled += UpdateKilledUI;
-        spawner.OnUpdateOnField += UpdateOnFieldUI;
+        spawner.OnUpdateDead += UpdateDeadUI;
+        spawner.OnUpdateAlive += UpdateAliveUI;
     }
     
     private void OnDisable()
     {
-        spawner.OnUpdateKilled -= UpdateKilledUI;
-        spawner.OnUpdateOnField -= UpdateOnFieldUI;
+        spawner.OnUpdateDead -= UpdateDeadUI;
+        spawner.OnUpdateAlive -= UpdateAliveUI;
     }
 
-    private void UpdateKilledUI(int killed)
+    private void UpdateDeadUI(int killed)
     {
         killedCount.text = killed.ToString();
     }
     
-    private void UpdateOnFieldUI(int onField)
+    private void UpdateAliveUI(int onField)
     {
         onFieldCount.text = onField.ToString();
     }

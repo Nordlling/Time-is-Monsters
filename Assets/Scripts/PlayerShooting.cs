@@ -5,30 +5,26 @@ using Zenject;
 public class PlayerShooting : MonoBehaviour
 {
     [Inject] private DiContainer diContainer;
-    [Inject] private DifficultyManager difficultyManager;
     [Inject] private Boosters boosters;
     
     [SerializeField] private Animator animator;
     [SerializeField] private GameObject ballPrefab;
     [SerializeField] private Transform point;
-    [SerializeField] private float ballSpeed = 6000f;
+    [SerializeField] private float ballSpeed = 3000f;
     [SerializeField] private float recharge = 0.5f;
-    [SerializeField] private float coeff = 0.9f;
+    [SerializeField] private float coef = 0.9f;
 
+    private int layerMask;
     private float _leftTime;
     private Vector3 worldMousePosition;
 
-    private int layerMask;
-    
-    
+
     private void OnEnable()
     {
-        difficultyManager.OnIncreaseLevel += Complicate;
         boosters.OnUpgradeRateFire += UpgradeRateFire;
     }
     private void OnDisable()
     {
-        difficultyManager.OnIncreaseLevel -= Complicate;
         boosters.OnUpgradeRateFire -= UpgradeRateFire;
     }
 
@@ -70,15 +66,11 @@ public class PlayerShooting : MonoBehaviour
         fireBall.GetComponent<Rigidbody>().AddForce(direction * ballSpeed);
     }
     
-    private void Complicate()
-    {
-        
-    }
     private void UpgradeRateFire()
     {
         if (recharge > 0.0001f)
         {
-            recharge *= coeff;
+            recharge *= coef;
         }
     }
 }
