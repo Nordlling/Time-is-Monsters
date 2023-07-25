@@ -2,16 +2,19 @@
 
 This is a single-player game where the main goal is to kill as many monsters as possible.
 
-The player has a cannon that deals damage to the monsters. Initially, the enemies have 100 HP, and one shot from the cannon deals 40 damage.
+The player has a cannon that deals damage to the monsters.
+Initially, the enemies have 100 HP, and one shot from the cannon deals 40 damage.
+The player has the ability to move along the X-axis.
 
 However, as the game progresses, the difficulty increases:
 - The enemies gain more HP.
 - Their movement speed increases.
 - The spawn time for new monsters decreases.
 
-The player has access to 2 skills and 2 upgrades:
+The player has access to 3 skills and 2 upgrades:
 - Skill #1: Kills all monsters on the field.
-- Skill #2: Freezes monster spawn for 10 seconds.
+- Skill #2: Freezes monster spawn for 3 seconds.
+- Skill #3: The next 3 shots fire double projectiles
 - Upgrade #1: Increases the cannon's damage.
 - Upgrade #2: Increases the cannon's rate of fire.
 
