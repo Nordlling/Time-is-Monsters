@@ -1,7 +1,6 @@
 using System;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 using Zenject;
 
 public class ButtonTimer : MonoBehaviour

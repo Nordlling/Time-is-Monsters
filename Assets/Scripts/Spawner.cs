@@ -10,22 +10,30 @@ public class Spawner : MonoBehaviour
     [Inject] private DifficultyManager difficultyManager;
 
     [SerializeField] private GameObject enemyPrefab;
-    [SerializeField] private Transform point;
-    [SerializeField] private float radius = 3f;
+    [SerializeField] private Collider platformCollider;
     [SerializeField] private float minSpawnTime = 3;
     [SerializeField] private float maxSpawnTime = 8;
     [SerializeField] private float coef = 0.95f;
     [SerializeField] private float freezeTime = 3f;
     [SerializeField] private int enemyCountToLose = 10;
 
+    [SerializeField] private AudioSource spawnEffect;
+
     public event Action<int> OnUpdateDead;
     public event Action<int> OnUpdateAlive;
+    public event Action OnActivateLeftBacklight;
+    public event Action OnActivateRightBacklight;
 
-    public int _aliveEnemies;
+    private int _aliveEnemies;
     private int _deadEnemies;
     private bool _freeze;
     private float _leftFreezeTime;
     private float _currentTime;
+    
+    private float spawnMinX;
+    private float spawnMaxX;
+    private float spawnMinZ;
+    private float spawnMaxZ;
     
     private void OnEnable()
     {
@@ -40,6 +48,13 @@ public class Spawner : MonoBehaviour
     {
         _currentTime = UnityEngine.Random.Range(minSpawnTime, maxSpawnTime + 1);
         _leftFreezeTime = freezeTime;
+        
+        var platformBounds = platformCollider.bounds;
+        var offset = 2f;
+        spawnMinX = platformBounds.min.x + offset;
+        spawnMaxX = platformBounds.max.x - offset;
+        spawnMinZ = platformBounds.min.z + offset;
+        spawnMaxZ = platformBounds.max.z - offset;
     }
 
 
@@ -88,18 +103,40 @@ public class Spawner : MonoBehaviour
         {
             return;
         }
-        Vector3 randomPoint = point.position + UnityEngine.Random.insideUnitSphere * radius;
-        randomPoint.y = point.position.y;
+        spawnEffect.Play();
+        
+        Vector3 spawnPosition = createSpawnPosition();
+        checkEnemyBeyondCameraView(spawnPosition);
 
-        diContainer.InstantiatePrefab(enemyPrefab, randomPoint, Quaternion.identity, null);
         _aliveEnemies++;
         OnUpdateAlive?.Invoke(_aliveEnemies);
         
+        diContainer.InstantiatePrefab(enemyPrefab, spawnPosition, Quaternion.identity, null);
+
         if (_aliveEnemies >= enemyCountToLose)
         {
             gameOverNotifier.GameOver(_deadEnemies);
             SaveManager.SaveHighScore(_deadEnemies);
         }
+    }
+
+    private void checkEnemyBeyondCameraView(Vector3 spawnPosition)
+    {
+        float xPosition = Camera.main.WorldToViewportPoint(spawnPosition).x;
+        if (xPosition < 0f)
+        {
+            OnActivateLeftBacklight?.Invoke();
+        } else if (xPosition > 1f)
+        {
+            OnActivateRightBacklight?.Invoke(); 
+        }
+    }
+
+    private Vector3 createSpawnPosition()
+    {
+        float randomX = UnityEngine.Random.Range(spawnMinX, spawnMaxX);
+        float randomZ = UnityEngine.Random.Range(spawnMinZ, spawnMaxZ);
+        return new Vector3(randomX, transform.position.y, randomZ);
     }
 
     public void FreezeSpawn()

@@ -7,6 +7,8 @@ public class BallAttack : MonoBehaviour
     
     [SerializeField] private float damage = 40f;
     [SerializeField] private float coef = 1.2f;
+    
+    [SerializeField] private GameObject damageEffect;
 
     private void Start()
     {
@@ -20,6 +22,7 @@ public class BallAttack : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Enemy") )
         {
+            Instantiate(damageEffect, transform.position, Quaternion.identity);
             EnemyHealth enemyHealth = other.gameObject.GetComponent<EnemyHealth>();
             enemyHealth.TakeDamage(damage);
         }

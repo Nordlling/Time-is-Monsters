@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using Zenject;
 
@@ -13,25 +12,32 @@ public class PlayerShooting : MonoBehaviour
     [SerializeField] private float ballSpeed = 3000f;
     [SerializeField] private float recharge = 0.5f;
     [SerializeField] private float coef = 0.9f;
+    [SerializeField] private int doubleShootsCount = 3;
 
-    private int layerMask;
+    [SerializeField] private AudioSource shootAudio;
+    [SerializeField] private ParticleSystem  shootEffect;
+
+    private int _layerMask;
     private float _leftTime;
-    private Vector3 worldMousePosition;
+    private Vector3 _worldMousePosition;
+    private int _availableDoubleShoots;
 
 
     private void OnEnable()
     {
         boosters.OnUpgradeRateFire += UpgradeRateFire;
+        boosters.OnUpgradeDoubleShoot += UpgradeDoubleShoot;
     }
     private void OnDisable()
     {
         boosters.OnUpgradeRateFire -= UpgradeRateFire;
+        boosters.OnUpgradeDoubleShoot -= UpgradeDoubleShoot;
     }
 
     private void Start()
     {
         _leftTime = 0;
-        layerMask = ~LayerMask.GetMask("Border");
+        _layerMask = ~LayerMask.GetMask("Border");
     }
 
     private void Update()
@@ -40,30 +46,43 @@ public class PlayerShooting : MonoBehaviour
         {
             _leftTime -= Time.deltaTime;
         }
-        if (Input.GetButtonDown("Fire1") && _leftTime <= 0)
+        if (Input.GetButtonDown("Fire1") && !UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject() && _leftTime <= 0)
         {
-            animator.SetTrigger("shoot");
-            Attack();
-            _leftTime = recharge;
+            Shoot();
         }
     }
     
-    public void Attack()
+    public void Shoot()
     {
+        shootEffect.Play();
+        shootAudio.Play();
+        animator.SetTrigger("shoot");
         Vector3 mousePosition = Input.mousePosition;
         
         Ray ray = Camera.main.ScreenPointToRay(mousePosition);
         RaycastHit hit;
 
-        if (Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask))
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, _layerMask))
         {
-            worldMousePosition = hit.point;
+            _worldMousePosition = hit.point;
         }
-        Vector3 direction = worldMousePosition - point.position;
+        Vector3 direction = _worldMousePosition - point.position;
         direction.Normalize();
+        
+        spawnBall(direction);
+        if (_availableDoubleShoots > 0)
+        {
+            spawnBall(direction);
+            _availableDoubleShoots--;
+        }
+        
+        _leftTime = recharge;
+    }
 
-        var fireBall = diContainer.InstantiatePrefab(ballPrefab, point.position, Quaternion.identity, null);
-        fireBall.GetComponent<Rigidbody>().AddForce(direction * ballSpeed);
+    private void spawnBall(Vector3 direction)
+    {
+        var ball = diContainer.InstantiatePrefab(ballPrefab, point.position, Quaternion.identity, null);
+        ball.GetComponent<Rigidbody>().AddForce(direction * ballSpeed);
     }
     
     private void UpgradeRateFire()
@@ -72,5 +91,9 @@ public class PlayerShooting : MonoBehaviour
         {
             recharge *= coef;
         }
+    }
+    private void UpgradeDoubleShoot()
+    {
+        _availableDoubleShoots = doubleShootsCount;
     }
 }

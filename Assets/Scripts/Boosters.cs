@@ -8,14 +8,16 @@ public class Boosters : MonoBehaviour
     [Inject] private Spawner spawner;
 
     [SerializeField] private float killAllRecharge = 60f;
-    [SerializeField] private float freezeSpawnRecharge = 60f;
-    [SerializeField] private float upgradeDamageRecharge = 60f;
-    [SerializeField] private float upgradeRateFireRecharge = 60f;
+    [SerializeField] private float freezeSpawnRecharge = 20f;
+    [SerializeField] private float doubleShootRecharge = 30f;
+    [SerializeField] private float upgradeDamageRecharge = 15f;
+    [SerializeField] private float upgradeRateFireRecharge = 20f;
     
-    private Dictionary<BoosterTypeEnum, TimerInfo> timers = new Dictionary<BoosterTypeEnum, TimerInfo>();
+    private Dictionary<BoosterTypeEnum, TimerInfo> _timers = new Dictionary<BoosterTypeEnum, TimerInfo>();
 
     public event Action OnKillAll;
     public event Action OnUpgradeRateFire;
+    public event Action OnUpgradeDoubleShoot;
     public event Action<BoosterTypeEnum, float> OnUpdateButtonTimer;
 
     public int UpgradeLevel { get; private set; }
@@ -24,13 +26,14 @@ public class Boosters : MonoBehaviour
     {
         AddTimer(BoosterTypeEnum.KILL_ALL, killAllRecharge);
         AddTimer(BoosterTypeEnum.FREEZE_SPAWN, freezeSpawnRecharge);
+        AddTimer(BoosterTypeEnum.DOUBLE_SHOOT, doubleShootRecharge);
         AddTimer(BoosterTypeEnum.UPGRADE_DAMAGE, upgradeDamageRecharge);
         AddTimer(BoosterTypeEnum.UPGRADE_RATE_FIRE, upgradeRateFireRecharge);
     }
 
     private void Update()
     {
-        foreach (KeyValuePair<BoosterTypeEnum, TimerInfo> kvp  in timers)
+        foreach (KeyValuePair<BoosterTypeEnum, TimerInfo> kvp  in _timers)
         {
             BoosterTypeEnum key = kvp.Key;
             TimerInfo timer = kvp.Value;
@@ -44,19 +47,23 @@ public class Boosters : MonoBehaviour
             }
         }
         
-        if (Input.GetButtonDown("Fire2"))
+        if (Input.GetKeyDown(KeyCode.Q))
         {
             ActivateKillAll();
         }
-        if (Input.GetButtonDown("Fire3"))
+        if (Input.GetKeyDown(KeyCode.W))
         {
             ActivateFreezeSpawn();
         }
-        if (Input.GetKeyDown(KeyCode.D))
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            ActivateDoubleShoot();
+        }
+        if (Input.GetKeyDown(KeyCode.Z))
         {
             UpgradeDamage();
         }
-        if (Input.GetKeyDown(KeyCode.S))
+        if (Input.GetKeyDown(KeyCode.X))
         {
             UpgradeRateFire();
         }
@@ -66,9 +73,9 @@ public class Boosters : MonoBehaviour
     public void ActivateKillAll()
     {
         const BoosterTypeEnum boosterType = BoosterTypeEnum.KILL_ALL;
-        if (!timers[boosterType].Started)
+        if (!_timers[boosterType].Started)
         {
-            timers[boosterType].UpdateTimer(Time.deltaTime);
+            _timers[boosterType].UpdateTimer(Time.deltaTime);
             OnKillAll?.Invoke();
         }
     }
@@ -76,37 +83,48 @@ public class Boosters : MonoBehaviour
     public void ActivateFreezeSpawn()
     {
         const BoosterTypeEnum boosterType = BoosterTypeEnum.FREEZE_SPAWN;
-        if (!timers[boosterType].Started)
+        if (!_timers[boosterType].Started)
         {
             spawner.FreezeSpawn();
-            timers[boosterType].UpdateTimer(Time.deltaTime);
+            _timers[boosterType].UpdateTimer(Time.deltaTime);
         }
     }
+
+    public void ActivateDoubleShoot()
+    {
+        const BoosterTypeEnum boosterType = BoosterTypeEnum.DOUBLE_SHOOT;
+        if (!_timers[boosterType].Started)
+        {
+            OnUpgradeDoubleShoot?.Invoke();
+            _timers[boosterType].UpdateTimer(Time.deltaTime);
+        }
+    }
+
 
     public void UpgradeDamage()
     {
         const BoosterTypeEnum boosterType = BoosterTypeEnum.UPGRADE_DAMAGE;
-        if (!timers[boosterType].Started)
+        if (!_timers[boosterType].Started)
         {
             UpgradeLevel++;
-            timers[boosterType].UpdateTimer(Time.deltaTime);
+            _timers[boosterType].UpdateTimer(Time.deltaTime);
         }
     }
     public void UpgradeRateFire()
     {
         const BoosterTypeEnum boosterType = BoosterTypeEnum.UPGRADE_RATE_FIRE;
-        if (!timers[boosterType].Started)
+        if (!_timers[boosterType].Started)
         {
             OnUpgradeRateFire?.Invoke();
-            timers[boosterType].UpdateTimer(Time.deltaTime);
+            _timers[boosterType].UpdateTimer(Time.deltaTime);
         }
     }
     
     private void AddTimer(BoosterTypeEnum boosterType, float cooldownDuration)
     {
-        if (!timers.ContainsKey(boosterType))
+        if (!_timers.ContainsKey(boosterType))
         {
-            timers.Add(boosterType, new TimerInfo(cooldownDuration));
+            _timers.Add(boosterType, new TimerInfo(cooldownDuration));
         }
     }
 }

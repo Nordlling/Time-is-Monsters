@@ -15,6 +15,11 @@ public class EnemyHealth : MonoBehaviour
     private float _currentHealth;
     private EnemyMovement _enemyMovement;
     
+    [SerializeField] private AudioSource damageEffect;
+    [SerializeField] private AudioSource dieAudio;
+    
+    [SerializeField] private ParticleSystem dieEffect;
+    
     private void OnEnable()
     {
         boosters.OnKillAll += Die;
@@ -32,6 +37,7 @@ public class EnemyHealth : MonoBehaviour
         }
         _currentHealth = maxHealth;
         _enemyMovement = GetComponent<EnemyMovement>();
+        damageEffect.enabled = true;
     }
     
     public void TakeDamage(float damage)
@@ -41,6 +47,7 @@ public class EnemyHealth : MonoBehaviour
                 throw new Exception("Negative damage");
             }
 
+            damageEffect.Play();
             _currentHealth -= damage;
 
             if (_currentHealth <= 0)
@@ -51,6 +58,8 @@ public class EnemyHealth : MonoBehaviour
 
     private void Die()
     {
+        dieAudio.Play();
+        dieEffect.Play();
         if (!_enemyMovement.enabled)
         {
             return;
